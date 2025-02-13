@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect
+from django.urls import reverse,reverse_lazy
 from .form import *
 from task.models import Task
 from django.http import HttpResponse
@@ -21,7 +22,7 @@ def signUp(request):
             form.save()
             user = User.objects.get(username=username)
             dj_login(request, user)
-            return redirect('/user/home')
+            return redirect(reverse('home'))
         else:
             return render(request, 'signUp.html', {'form': form, 'errors': form.errors} )
 
@@ -29,7 +30,7 @@ def signUp(request):
 def login(request):
     if request.method =='GET':
         form = LoginForm()
-        return render(request, 'login.html',{'form' : LoginForm()} )
+        return render(request, 'login.html',{'form' : form} )
     
     elif request.method == 'POST':
         form = LoginForm(request.POST)
@@ -43,7 +44,7 @@ def login(request):
 
             if user.check_password(password):
                     dj_login(request, user)
-                    return redirect('/user/home')
+                    return redirect(reverse('home'))
                     
             else: 
                     return render (request, 'login.html', { 'form':form,'error':'password is incorrect'}) 
@@ -54,11 +55,11 @@ def login(request):
         
 @csrf_exempt
 def logout(request):
-    dj_logout(request)
-    return redirect('/user/login')
+        dj_logout(request)
+        return redirect(reverse('login'))
 
 @csrf_exempt
-@login_required(login_url='/user/login')
+@login_required(login_url=reverse_lazy('login'))
 def home(request):
     if request.method=='GET':
         tasks = request.user.tasks.all()
@@ -66,7 +67,7 @@ def home(request):
 
 
 @csrf_exempt
-@login_required(login_url='/user/login')
+@login_required(login_url=reverse_lazy('login'))
 def addTask(request):
 
     if request.method == 'GET':
@@ -78,31 +79,29 @@ def addTask(request):
 
         if form.is_valid():
             request.user.tasks.create(**form.cleaned_data , user = request.user)
-            return redirect('/user/home')
-        else:
-            return redirect('/user/home')
+        return redirect(reverse('home'))
+    
     else:
         HttpResponse("only get and post method is allowed")
 
 
 @csrf_exempt
-@login_required(login_url='/user/login')
+@login_required(login_url=reverse_lazy('login'))
 def deleteTask(request, id):
 
     if request.method == 'POST':    
         request.user.tasks.get(id=id).delete()
-        return redirect('/user/home')
     
-    return redirect('/user/home')
+    return redirect(reverse('home'))
 
 
 @csrf_exempt
-@login_required(login_url='/user/login')
+@login_required(login_url=reverse_lazy('login'))
 def updateTask(request,id):
 
     task = request.user.tasks.get(id=id)
     if request.method == 'GET':
-        form = CreateTask(instance = request.user.tasks.get(id=id))
+        form = CreateTask(instance = task)
         return render(request, 'updateTask.html', {'form': form})
     
     if request.method == 'POST':
@@ -112,9 +111,10 @@ def updateTask(request,id):
             task= form.save(commit=False)
             task.user = request.user
             task.save()
-            return redirect('/user/home')
+            return redirect(reverse('home'))
         else:
-            return redirect('/user/home')
+            return redirect(reverse('home'))
+
     else:
         HttpResponse("only get and post method is allowed")
 

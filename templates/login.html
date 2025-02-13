@@ -1,117 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
-        :root {
-            --primary-color: #04ae72;  /* Same primary color as other templates */
-            --background-color: #f1f9f5;
-        }
+{% extends 'base.html' %}
 
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: var(--background-color);
-            line-height: 1.6;
-        }
+{% block title %}Login{% endblock %}
 
-        h1 {
-            color: var(--primary-color);  /* Apply the primary color to the header */
-            margin-bottom: 20px;
-            font-weight: 800;  /* Increase the font-weight for bolder appearance */
-        }
+{% block extra_styles %}
+.login-link {
+    margin-top: 20px;
+}
 
-        form {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
+a {
+    color: #2196F3;
+    text-decoration: none;
+    margin-left: 5px;
+}
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-        }
+a:hover {
+    text-decoration: underline;
+}
+{% endblock %}
 
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0 20px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--primary-color);
-            outline: none;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .error-message {
-            color: #dc3545;
-            font-weight: bold;
-            background-color: #ffe6e6;
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
-            border: 1px solid #ffcccc;
-        }
-
-        .login-link {
-            margin-top: 20px;
-        }
-
-        a {
-            color: #2196F3;
-            text-decoration: none;
-            margin-left: 5px;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
+{% block content %}
     <h1>Login To Account</h1>
-    <p>You can create and manage your tasks when you are logged in</p>
+    <p>You can create and manage your tasks when you are logged in.</p>
 
     {% if error %}
         <p class="error-message">{{ error }}</p>
+        <br>
     {% endif %}
-
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.username.label_tag }}  <!-- Label for the username field -->
-        {{ form.username }}  <!-- Render the username input -->
-
-        {{ form.password.label_tag }}  <!-- Label for the password field -->
-        {{ form.password }}  <!-- Render the password input -->
-
-        <button type="submit">Login</button>
-    </form>
+    
+    <div class="form-container">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            <br><br>
+            <button type="submit">Login</button>
+        </form>
+    </div>
 
     <div class="login-link">
         <p>Don't have an account?<a href="{% url 'signup' %}">Sign up</a></p>
     </div>
-</body>
-</html>
+{% endblock %}

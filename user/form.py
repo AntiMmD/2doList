@@ -21,13 +21,20 @@ class LoginForm(forms.Form):
 
 
 class CreateTask(forms.ModelForm):
+    
     class Meta:
         model = Task
         fields = '__all__'
         exclude = ['date_created','status','user',]
+        widgets = {
+            'expiration_date': forms.DateInput(
+                attrs={
+                    'type': 'date',})
+                }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
         self.fields['description'].required = False  # Make 'description' optional
         self.fields['expiration_date'].required = False  # Make 'expiration_date' optional
         self.fields['priority'].required = False  # Make 'status' optional

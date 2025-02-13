@@ -1,147 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo List</title>
-    <style>
-        :root {
-            --primary-color: #04ae72;
-            --primary-hover: #04ae72;
-            --background-color: #f1f9f5;
-            --form-background: #ffffff;
-            --text-color: #334155;
-            --border-color: #e2e8f0;
-            --error-color: #ef4444;
-        }
+{% extends "base.html" %}
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 10px;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.4;
-        }
+{% block title %}Todo List{% endblock %}
 
-        h1 {
-            color: var(--primary-color);
-            text-align: center;
-            margin: 10px 0 20px;
-            font-size: 2rem;
-            font-weight: 800;
-        }
+{% block content %}
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <a href="{% url 'home' %}" style="text-decoration: none;">
+            <h1 class="todo-header">To-do List!</h1>
+        </a>
 
-        .search-form, .task-list {
-            background: var(--form-background);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            margin-bottom: 1rem;
-        }
+        <!-- Door Icon with Logout Action -->
+        <a href="{% url 'logout' %}" id="logout-link" style="position: absolute; left: 15px; top: 10px; font-size: 1.5rem; color: var(--error-color); transition: color 0.3s ease;">
+            <i class="fa fa-door-open"></i>
+        </a>
 
-        .search-form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .search-form label {
-            font-weight: 600; /* Make "Search Task by Name" bold */
-            margin-bottom: 0.5rem;
-            color: var(--text-color);
-        }
-
-        .search-form input[type="text"] {
-            padding: 0.6rem;
-            margin-bottom: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-
-        button {
-            padding: 0.6rem;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.15s ease-in-out;
-        }
-
-        button:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .task-list {
-            padding-top: 1rem; /* Ensure consistent padding inside task list */
-        }
-
-        .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .task-item:last-child {
-            border-bottom: none;
-        }
-
-        .delete-btn {
-            background-color: var(--error-color);
-        }
-
-        .error-message {
-            color: #dc3545;
-            font-weight: bold;
-            background-color: #ffe6e6;
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
-            border: 1px solid #ffcccc;
-        }
-    </style>
-</head>
-<body>
-    <a href="/user/home/" style="text-decoration: none;">
-        <h1>Todo List</h1>
-    </a>
+        <!-- Search Form -->
+        <form action="{% url 'search_task'%}" method="GET" style="flex-grow: 0; margin-left: 10px;">
+            <input type="text" id="search-task" name="task_name" placeholder="Search task" style="width: 200px; padding: 0.4rem; border-radius: 50px; border: 1px solid var(--border-color); font-size: 0.9rem;">
+        </form>
+    </div>
     
-    {%if error%}
+    {% if error %}
     <p class="error-message">{{ error }}</p>
-    {%endif%}
-    <!-- Search Form -->
-    <form action="/user/search_task/" method="GET" class="search-form">
-        <input type="text" id="search-task" name="task_name" placeholder="Enter task name to search" >
-        <button type="submit">Search Task</button>
-    </form>
+    {% endif %}
+    
     <!-- Add Task -->
-    <form action="/user/add_task/" method="GET">
-        <button type="submit">Add Task</button>
+    <form action="{% url 'add_task'%}" method="GET">
+        <button type="submit" class="small-btn">Add Task</button>
     </form>
+
     <!-- Task List -->
     <div class="task-list">
-        
         {% for task in tasks %}
         <div class="task-item">
             <span>{{ task.name }}</span>
-            <div>
-                <form action="/user/update_task/{{ task.id }}/" method="GET" style="display: inline;">
-                    <button type="submit">Update</button>
+            <div class="task-actions">
+                <form action="{% url 'update_task' task.id %}" method="GET" style="display: inline;">
+                    <button type="submit" class="small-btn">Edit</button>
                 </form>
-                <form action="/user/delete_task/{{ task.id }}/" method="POST" style="display: inline;">
+                <form action="{% url 'delete_task' task.id %}" method="POST" style="display: inline;">
                     {% csrf_token %}
-                    <button type="submit" class="delete-btn">Delete</button>
+                    <button type="submit" class="small-btn delete-btn">Delete</button>
                 </form>
             </div>
         </div>
         {% endfor %}
     </div>
-</body>
-</html>
+
+    <script>
+        // JavaScript for logout confirmation
+        document.getElementById('logout-link').addEventListener('click', function(event) {
+            event.preventDefault();  // Prevent the default link behavior
+            if (confirm("Are you sure you want to log out?")) {
+                window.location.href = "{% url 'logout' %}";  // Redirect to logout URL if confirmed
+            }
+        });
+    </script>
+{% endblock %}
+
+

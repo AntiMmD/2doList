@@ -1,106 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Task</title>
-    <style>
-        :root {
-            --primary-color: #04ae72;
-            --primary-hover: #04ae72;
-            --background-color: #f1f9f5;
-            --form-background: #ffffff;
-            --text-color: #334155;
-            --border-color: #e2e8f0;
-            --error-color: #ef4444;
-            --success-color: #15803d;
-        }
+{% extends 'base.html' %}
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 10px;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.4;
-        }
+{% block title %}Update Task{% endblock %}
 
-        h1 {
-            color: var(--primary-color);
-            text-align: center;
-            margin: 10px 0 20px;
-            font-size: 2rem;
-            font-weight: 800;
-        }
-
-        .form-container {
-            background: var(--form-background);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.25rem;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-
-        input, 
-        select, 
-        textarea {
-            width: 100%;
-            padding: 0.5rem;
-            margin-bottom: 0.25rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-            transition: border-color 0.15s ease-in-out;
-        }
-
-        input:focus, 
-        select:focus, 
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.1);
-        }
-
-        button {
-            width: 100%;
-            padding: 0.6rem;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.15s ease-in-out;
-            margin-top: 0.5rem;
-        }
-
-        button:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-    </style>
-</head>
-<body>
+{% block content %}
     <h1>Update Task</h1>
-    <div class="form-container">
+    <div class="form-container" style="position: relative; padding-left: 40px;">  
+        <a href="{% url 'home' %}" style="position: absolute; top: 0px; left: 10px; font-size: 24px; text-decoration: none;color: red;">&times;</a>
+        
         <form method="POST">
             {% csrf_token %}
             {% for field in form %}
+            
                 <div class="form-group">
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                
                     {{ field }}
                     {% if field.errors %}
                         {% for error in field.errors %}
@@ -109,8 +22,8 @@
                     {% endif %}
                 </div>
             {% endfor %}
+            <br>
             <button type="submit">Update Task</button>
         </form>
     </div>
-</body>
-</html>
+{% endblock %}
