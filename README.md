@@ -2,8 +2,6 @@
 
 A web-based task management application built with Django that allows users to create, manage, and track their tasks.
 
-I'm just sharing this project to receive feedback and suggestions.
-
 ## Features
 
 - User Authentication
